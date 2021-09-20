@@ -20,4 +20,8 @@ public class Teacher extends Person {
                 .append(this.getLastName()).append(", Personnel Id: ").append(this.personnelId );
         return stringBuilder.toString();
     }
+
+    public void setPersonnelId(int personnelId) {
+        this.personnelId = personnelId;
+    }
 }

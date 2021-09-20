@@ -20,4 +20,8 @@ public class Student extends Person {
                 .append(this.getLastName()).append(", Student Id: ").append(this.studentId);
         return stringBuilder.toString();
     }
+
+    public void setStudentId(int studentId) {
+        this.studentId = studentId;
+    }
 }
