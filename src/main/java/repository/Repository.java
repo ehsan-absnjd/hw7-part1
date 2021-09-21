@@ -25,6 +25,7 @@ public class Repository {
         try {
             Statement statement = connection.createStatement();
             statement.execute("CREATE TABLE IF NOT EXISTS student( student_id INT NOT NULL AUTO_INCREMENT, first_name VARCHAR(50), last_name VARCHAR(50), PRIMARY KEY(student_id))");
+            statement.close();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -34,6 +35,7 @@ public class Repository {
         try {
             Statement statement = connection.createStatement();
             statement.execute("CREATE TABLE IF NOT EXISTS teacher( personnel_id INT NOT NULL AUTO_INCREMENT, first_name VARCHAR(50), last_name VARCHAR(50), PRIMARY KEY(personnel_id))");
+            statement.close();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -42,6 +44,7 @@ public class Repository {
         try {
             Statement statement = connection.createStatement();
             statement.execute("CREATE TABLE IF NOT EXISTS student_teacher( student_id INT NOT NULL , personnel_id INT NOT NULL, FOREIGN KEY(student_id) REFERENCES student(student_id) ON DELETE CASCADE ON UPDATE CASCADE, FOREIGN KEY(personnel_id) REFERENCES teacher(personnel_id) ON DELETE CASCADE ON UPDATE CASCADE , PRIMARY KEY(student_id,personnel_id))" );
+            statement.close();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
