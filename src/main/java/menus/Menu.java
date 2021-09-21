@@ -58,6 +58,7 @@ public class Menu {
                     break;
                 case 11:
                     System.out.println("bye");
+                    repository.close();
                     break;
                 default:
                     System.out.println("invalid command");

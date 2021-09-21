@@ -53,6 +53,7 @@ public class Repository {
             statement.setString(2, student.getFirstName());
             statement.setString(3, student.getLastName());
             statement.executeUpdate( );
+            statement.close();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -64,6 +65,7 @@ public class Repository {
             statement.setString(2, teacher.getFirstName());
             statement.setString(3,teacher.getLastName());
             statement.executeUpdate( );
+            statement.close();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -75,17 +77,21 @@ public class Repository {
             PreparedStatement statement = connection.prepareStatement("SELECT COUNT(*) FROM student_teacher st INNER JOIN student t USING(student_id) WHERE st.personnel_id=?");
             statement.setInt(1,personnelId);
             ResultSet countResult =statement.executeQuery();
+            statement.close();
             countResult.next();
             int studentCount = countResult.getInt(1);
+            countResult.close();
             if(studentCount>0){
                 students = new Student[studentCount];
                 PreparedStatement listStatement = connection.prepareStatement("SELECT t.student_id, t.first_name, t.last_name FROM student_teacher st INNER JOIN student t USING(student_id) WHERE st.personnel_id=?");
                 listStatement.setInt(1,personnelId);
                 ResultSet listResult = listStatement.executeQuery();
+                listStatement.close();
                 int index=0;
                 while(listResult.next()){
                     students[index++]=new Student(listResult.getInt(1),listResult.getString(2), listResult.getString(3));
                 }
+                listResult.close();
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -101,6 +107,7 @@ public class Repository {
             statement.setString(3, student.getLastName());
             statement.setInt(4,id);
             statement.executeUpdate( );
+            statement.close();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -114,6 +121,7 @@ public class Repository {
             statement.setString(3,teacher.getLastName());
             statement.setInt(4,id);
             statement.executeUpdate( );
+            statement.close();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -124,6 +132,7 @@ public class Repository {
             PreparedStatement statement = connection.prepareStatement("DELETE FROM student WHERE student_id=?");
             statement.setInt(1,id);
             statement.executeUpdate( );
+            statement.close();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -133,6 +142,7 @@ public class Repository {
             PreparedStatement statement = connection.prepareStatement("DELETE FROM teacher WHERE personnel_id=?");
             statement.setInt(1,id);
             statement.executeUpdate( );
+            statement.close();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -143,7 +153,10 @@ public class Repository {
             PreparedStatement statement = connection.prepareStatement("SELECT * FROM student WHERE student_id = ?");
             statement.setInt(1,id);
             ResultSet resultSet = statement.executeQuery( );
-            return resultSet.next();
+            statement.close();
+            boolean exists = resultSet.next();
+            resultSet.close();
+            return exists;
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -154,7 +167,10 @@ public class Repository {
             PreparedStatement statement = connection.prepareStatement("SELECT * FROM teacher WHERE personnel_id = ?");
             statement.setInt(1,id);
             ResultSet resultSet = statement.executeQuery( );
-            return resultSet.next();
+            statement.close();
+            boolean exists = resultSet.next();
+            resultSet.close();
+            return exists;
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -166,7 +182,10 @@ public class Repository {
             statement.setInt(1,studentId);
             statement.setInt(2,personnelId);
             ResultSet resultSet = statement.executeQuery( );
-            return resultSet.next();
+            statement.close();
+            boolean exists = resultSet.next();
+            resultSet.close();
+            return exists;
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -180,13 +199,16 @@ public class Repository {
             ResultSet countResult =statement.executeQuery("SELECT COUNT(*) FROM teacher");
             countResult.next();
             int teacherCount = countResult.getInt(1);
+            countResult.close();
             if(teacherCount>0){
                 teachers = new Teacher[teacherCount];
                 ResultSet listResult = statement.executeQuery("SELECT * FROM teacher");
+                statement.close();
                 int index=0;
                 while(listResult.next()){
                     teachers[index++]=new Teacher(listResult.getInt(1),listResult.getString(2), listResult.getString(3));
                 }
+                listResult.close();
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -200,13 +222,16 @@ public class Repository {
             ResultSet countResult =statement.executeQuery("SELECT COUNT(*) FROM student");
             countResult.next();
             int studentCount = countResult.getInt(1);
+            countResult.close();
             if(studentCount>0){
                 students = new Student[studentCount];
                 ResultSet listResult = statement.executeQuery("SELECT * FROM student");
+                statement.close();
                 int index=0;
                 while(listResult.next()){
                     students[index++]=new Student(listResult.getInt(1),listResult.getString(2), listResult.getString(3));
                 }
+                listResult.close();
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -219,11 +244,19 @@ public class Repository {
                 PreparedStatement statement = connection.prepareStatement("INSERT INTO student_teacher VALUES( ? , ?)");
                 statement.setInt(1,studentId);
                 statement.setInt(2,personnelId);
-                ResultSet countResult =statement.executeQuery();
+                statement.executeUpdate();
+                statement.close();
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }
         }
+    }
 
+    public void close() {
+        try {
+            connection.close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
     }
 }
